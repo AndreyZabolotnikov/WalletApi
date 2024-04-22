@@ -1,0 +1,27 @@
+version: '3'
+
+services:
+  WalletApi:
+    image: walletapi:1.0
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - 8080:8080
+    depends_on:
+      - postgres
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://postgres:5432/postgres_db
+      - SPRING_DATASOURCE_USERNAME=postgres_user
+      - SPRING_DATASOURCE_PASSWORD=123456
+      - SPRING_JPA_HIBERNATE_DDL_AUTO=validate
+  postgres:
+    image: postgres:15.2
+    container_name: postgres-wallet
+    ports:
+      - 5432:5432
+    environment:
+      POSTGRES_HOST: localhost
+      POSTGRES_USER: postgres_user
+      POSTGRES_PASSWORD: 123456
+      POSTGRES_DB: postgres_db
