@@ -1,10 +1,7 @@
 package ru.duxa.walletapi.controllers;
 
-import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
-import io.github.resilience4j.retry.annotation.Retry;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Lazy;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
@@ -26,24 +23,18 @@ public class WalletController {
     private final WalletService walletService;
 
     @Autowired
-    @Lazy
     public WalletController(WalletService walletService) {
         this.walletService = walletService;
     }
 
     @GetMapping("/wallets/{WALLET_UUID}")
-    @CircuitBreaker(name = "walletBreaker", fallbackMethod = "getWalletFallback")
-    @Retry(name = "walletRetry")
     public Double getWalletBalance(@PathVariable("WALLET_UUID") long walletUUID) {
         Double balance = walletService.getWalletBalance(walletUUID);
         return balance;
     }
 
     @PostMapping("/wallet")
-    @CircuitBreaker(name = "walletBreaker", fallbackMethod = "updateWalletFallback")
-    @Retry(name = "walletRetry")
     public ResponseEntity<HttpStatus> changeWallet(@RequestBody @Valid WalletDTO walletDTO, BindingResult result) {
-        System.out.println(walletDTO.toString());
         if (result.hasErrors()) {
             StringBuilder errorMessage = new StringBuilder();
 
